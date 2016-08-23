@@ -46,8 +46,9 @@ namespace PhoneVerification.Web.Controllers
             var client = new TwilioRestClient(TwilioAccountSID, TwilioAuthToken);
             client.InitiateOutboundCall(new CallOptions
             {
+                From = TwilioNumber,                          // The phone number you wish to dial.
                 To = phoneNumber,
-                From = TwilioNumber
+                Url = "http://www.example.com/call/webhook"   // The URL of call/webhook on your server.
             });
 
             return Json(new {verificationCode});
