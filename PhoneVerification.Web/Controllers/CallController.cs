@@ -47,7 +47,7 @@ namespace PhoneVerification.Web.Controllers
 
             // Make the phone call.
             var client = new TwilioRestClient(TwilioAccountSID, TwilioAuthToken);
-            var call = client.InitiateOutboundCall(new CallOptions
+            client.InitiateOutboundCall(new CallOptions
             {
                 From = TwilioNumber,                          // The phone number you wish to dial.
                 To = phoneNumber,
