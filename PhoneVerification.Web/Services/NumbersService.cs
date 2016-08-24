@@ -8,6 +8,7 @@ namespace PhoneVerification.Web.Services
     {
         Task<Number> FindByPhoneNumberAsync(string phoneNumber);
         Task<int> CreateAsync(Number number);
+        Task<int> UpdateAsync(Number number);
         Task<int> DeleteAsync(Number number);
     }
 
@@ -28,6 +29,12 @@ namespace PhoneVerification.Web.Services
         public async Task<int> CreateAsync(Number number)
         {
             _context.Numbers.Add(number);
+            return await _context.SaveChangesAsync();
+        }
+
+        public async Task<int> UpdateAsync(Number number)
+        {
+            _context.Entry(number).State = EntityState.Modified;
             return await _context.SaveChangesAsync();
         }
 

@@ -30,7 +30,10 @@ namespace PhoneVerification.Web.Controllers
         {
             // Find and delete a phone number.
             var number = await _service.FindByPhoneNumberAsync(phoneNumber);
-            await _service.DeleteAsync(number);
+            if (number != null)
+            {
+                await _service.DeleteAsync(number);
+            }
 
             // Create a phone number.
             var verificationCode = GenerateVerificationCode();
@@ -44,40 +47,45 @@ namespace PhoneVerification.Web.Controllers
 
             // Make the phone call.
             var client = new TwilioRestClient(TwilioAccountSID, TwilioAuthToken);
-            client.InitiateOutboundCall(new CallOptions
+            var call = client.InitiateOutboundCall(new CallOptions
             {
                 From = TwilioNumber,                          // The phone number you wish to dial.
                 To = phoneNumber,
-                Url = "http://www.example.com/call/webhook"   // The URL of call/webhook on your server.
+                Url = "http://www.example.com/call/twiml"     // The URL of call/twiml on your server.
             });
 
             return Json(new {verificationCode});
         }
 
-        // POST: Call/Webhook
+        // POST: Call/Twiml
         [HttpPost]
-        public async Task<ActionResult> Webhook(string digits, string called)
+        public async Task<ActionResult> Twiml(string digits, string called)
         {
             var response = new TwilioResponse();
 
             if (string.IsNullOrEmpty(digits))
             {
                 response
-                    .Gather(new {numDigits = 6})
-                    .Say("Please enter your verification code");
+                    .BeginGather(new {numDigits = 6, timeOut = 10})
+                    .Say("Please enter your verification.")
+                    .EndGather();
             }
             else
             {
                 var number = await _service.FindByPhoneNumberAsync(called);
                 if (digits.Equals(number.VerificationCode))
                 {
+                    number.Verified = true;
+                    await _service.UpdateAsync(number);
+
                     response.Say("Thank you! Your phone number has been verified.");
                 }
                 else
                 {
                     response
-                        .Gather(new { numDigits = 6 })
-                        .Say("Verification code incorrect, please try again.");
+                        .BeginGather(new {numDigits = 6, timeOut = 10})
+                        .Say("Verification code incorrect, please try again.")
+                        .EndGather();
                 }
             }
 
@@ -93,8 +101,6 @@ namespace PhoneVerification.Web.Controllers
 
             return Json(new {status});
         }
-
-
 
         private static string GenerateVerificationCode()
         {
