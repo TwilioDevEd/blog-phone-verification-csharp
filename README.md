@@ -39,10 +39,6 @@ This project is built using [ASP.NET MVC](http://www.asp.net/mvc) Framework.
    Update-Database
    ```
 
-1. Run the application.
-
-1. Check it out at [http://localhost:8080](http://localhost:8080).
-
 1. Expose application to the wider internet. To [start using
    ngrok](https://www.twilio.com/blog/2015/09/6-awesome-reasons-to-use-ngrok-when-testing-webhooks.html)
    on our project you'll have to execute the following line in the command
@@ -51,6 +47,23 @@ This project is built using [ASP.NET MVC](http://www.asp.net/mvc) Framework.
    ```shell
    ngrok http 8080 -host-header="localhost:8080"
    ```
+
+1. Update the URL call option with the one in the [CallController.cs][call-controller] as shown below.
+
+   ```csharp
+   client.InitiateOutboundCall(new CallOptions
+   {
+       From = TwilioNumber,                               // The phone number you wish to dial.
+       To = phoneNumber,
+       Url = "http://<subdomain>.ngrok.io/call/twiml"     // The URL of call/twiml on your server.
+   });
+   ```
+
+1. Run the application.
+
+1. Check it out at [http://localhost:8080](http://localhost:8080).
+
+[call-controller]: https://github.com/TwilioDevEd/blog-phone-verification-csharp/blob/master/PhoneVerification.Web/Controllers/CallController.cs#L54
 
 ## Meta
 
