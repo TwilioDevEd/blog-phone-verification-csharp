@@ -47,12 +47,18 @@ namespace PhoneVerification.Web.Controllers
 
             // Make the phone call.
             var client = new TwilioRestClient(TwilioAccountSID, TwilioAuthToken);
-            client.InitiateOutboundCall(new CallOptions
+            var call = client.InitiateOutboundCall(new CallOptions
             {
                 From = TwilioNumber,                          // The phone number you wish to dial.
                 To = phoneNumber,
                 Url = "http://www.example.com/call/twiml"     // The URL of call/twiml on your server.
             });
+
+            if (call.RestException != null)
+            {
+                // If there is an exception, fail loudly.
+                throw new TwilioRestException(call.RestException);
+            }
 
             return Json(new {verificationCode});
         }
