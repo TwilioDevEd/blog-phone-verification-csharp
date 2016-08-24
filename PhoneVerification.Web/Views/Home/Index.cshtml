@@ -1,12 +1,16 @@
 ﻿<form id="enter_number">
-    <p>Enter your phone number:</p>
-    <p><input type="text" name="phone_number" id="phone_number" /></p>
-    <p><input type="submit" name="submit" value="Verify" /></p>
+    <div class="form-group">
+        <label for="phone_number">Enter your phone number</label>
+        <input type="text" class="form-control" name="phone_number" id="phone_number" />
+    </div>
+    <button type="submit" name="submit" class="btn btn-default">Verify</button>
 </form>
 
 <div id="verify_code" style="display: none;">
-    <p>Calling you now.</p>
-    <p>When prompted, enter the verification code:</p>
+    <p>
+        Calling you now. <br />
+        When prompted, enter the verification code:
+    </p>
     <h1 id="verification_code"></h1>
     <p><strong id="status">Waiting...</strong></p>
 </div>
