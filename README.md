@@ -48,22 +48,16 @@ This project is built using [ASP.NET MVC](http://www.asp.net/mvc) Framework.
    ngrok http 8080 -host-header="localhost:8080"
    ```
 
-1. Update the URL call option with the one in the [CallController.cs][call-controller] as shown below.
+1. Update the base URL in the `Web.config` file as shown below.
 
-   ```csharp
-   client.InitiateOutboundCall(new CallOptions
-   {
-       From = TwilioNumber,                               // The phone number you wish to dial.
-       To = phoneNumber,
-       Url = "http://<subdomain>.ngrok.io/call/twiml"     // The URL of call/twiml on your server.
-   });
+   ```xml
+   <!-- This will be the base URL for your call/twiml route on your server.-->
+   <add key="BaseUrl" value="http://<subdomain>.ngrok.io" />
    ```
 
 1. Run the application.
 
 1. Check it out at [http://localhost:8080](http://localhost:8080).
-
-[call-controller]: https://github.com/TwilioDevEd/blog-phone-verification-csharp/blob/master/PhoneVerification.Web/Controllers/CallController.cs#L54
 
 ## Meta
 
