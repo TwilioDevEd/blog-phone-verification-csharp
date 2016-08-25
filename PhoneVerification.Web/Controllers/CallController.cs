@@ -15,6 +15,7 @@ namespace PhoneVerification.Web.Controllers
     {
         private readonly INumbersService _service;
 
+        public static string NgrokDomain => WebConfigurationManager.AppSettings["NgrokDomain"];
         public static string TwilioAccountSID => WebConfigurationManager.AppSettings["TwilioAccountSID"];
         public static string TwilioAuthToken => WebConfigurationManager.AppSettings["TwilioAuthToken"];
         public static string TwilioNumber => WebConfigurationManager.AppSettings["TwilioNumber"];
@@ -28,12 +29,8 @@ namespace PhoneVerification.Web.Controllers
         [HttpPost]
         public async Task<JsonResult> Create(string phoneNumber)
         {
-            // Find and delete a phone number.
-            var number = await _service.FindByPhoneNumberAsync(phoneNumber);
-            if (number != null)
-            {
-                await _service.DeleteAsync(number);
-            }
+            // Delete a phone number.
+            await _service.DeleteByPhoneNumberAsync(phoneNumber);
 
             // Create a phone number.
             var verificationCode = GenerateVerificationCode();
@@ -49,9 +46,9 @@ namespace PhoneVerification.Web.Controllers
             var client = new TwilioRestClient(TwilioAccountSID, TwilioAuthToken);
             var call = client.InitiateOutboundCall(new CallOptions
             {
-                From = TwilioNumber,                          // The phone number you wish to dial.
+                From = TwilioNumber,                   // The phone number you wish to dial.
                 To = phoneNumber,
-                Url = "http://www.example.com/call/twiml"     // The URL of call/twiml on your server.
+                Url = $"{NgrokDomain}/call/twiml"      // The URL of call/twiml on your server.
             });
 
             if (call.RestException != null)

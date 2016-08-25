@@ -9,7 +9,7 @@ namespace PhoneVerification.Web.Services
         Task<Number> FindByPhoneNumberAsync(string phoneNumber);
         Task<int> CreateAsync(Number number);
         Task<int> UpdateAsync(Number number);
-        Task<int> DeleteAsync(Number number);
+        Task<int> DeleteByPhoneNumberAsync(string phoneNumber);
     }
 
     public class NumbersService : INumbersService
@@ -38,8 +38,15 @@ namespace PhoneVerification.Web.Services
             return await _context.SaveChangesAsync();
         }
 
-        public async Task<int> DeleteAsync(Number number)
+        public async Task<int> DeleteByPhoneNumberAsync(string phoneNumber)
         {
+            var number  = await _context.Numbers.FirstOrDefaultAsync(n => n.PhoneNumber == phoneNumber);
+
+            if (number == null)
+            {
+                return await Task.FromResult(0);
+            }
+
             _context.Entry(number).State = EntityState.Deleted;
             return await _context.SaveChangesAsync();
         }
